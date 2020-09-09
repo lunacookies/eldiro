@@ -1,7 +1,7 @@
 use crate::utils;
 
 #[derive(Debug, PartialEq)]
-pub struct Number(i32);
+pub struct Number(pub i32);
 
 impl Number {
     pub fn new(s: &str) -> (&str, Self) {
