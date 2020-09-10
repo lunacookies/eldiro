@@ -1,4 +1,5 @@
 use crate::utils;
+use crate::val::Val;
 
 #[derive(Debug, PartialEq)]
 pub struct Number(pub i32);
@@ -52,6 +53,20 @@ impl Expr {
         let (s, rhs) = Number::new(s);
 
         (s, Self { lhs, rhs, op })
+    }
+
+    pub(crate) fn eval(&self) -> Val {
+        let Number(lhs) = self.lhs;
+        let Number(rhs) = self.rhs;
+
+        let result = match self.op {
+            Op::Add => lhs + rhs,
+            Op::Sub => lhs - rhs,
+            Op::Mul => lhs * rhs,
+            Op::Div => lhs / rhs,
+        };
+
+        Val::Number(result)
     }
 }
 
@@ -111,6 +126,58 @@ mod tests {
                     op: Op::Mul,
                 },
             ),
+        );
+    }
+
+    #[test]
+    fn eval_add() {
+        assert_eq!(
+            Expr {
+                lhs: Number(10),
+                rhs: Number(10),
+                op: Op::Add,
+            }
+            .eval(),
+            Val::Number(20),
+        );
+    }
+
+    #[test]
+    fn eval_sub() {
+        assert_eq!(
+            Expr {
+                lhs: Number(1),
+                rhs: Number(5),
+                op: Op::Sub,
+            }
+            .eval(),
+            Val::Number(-4),
+        );
+    }
+
+    #[test]
+    fn eval_mul() {
+        assert_eq!(
+            Expr {
+                lhs: Number(5),
+                rhs: Number(6),
+                op: Op::Mul,
+            }
+            .eval(),
+            Val::Number(30),
+        );
+    }
+
+    #[test]
+    fn eval_div() {
+        assert_eq!(
+            Expr {
+                lhs: Number(200),
+                rhs: Number(20),
+                op: Op::Div,
+            }
+            .eval(),
+            Val::Number(10),
         );
     }
 }
