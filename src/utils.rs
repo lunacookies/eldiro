@@ -31,6 +31,10 @@ pub(crate) fn extract_whitespace(s: &str) -> (&str, &str) {
     take_while(|c| c == ' ', s)
 }
 
+pub(crate) fn extract_whitespace1(s: &str) -> Result<(&str, &str), String> {
+    take_while1(|c| c == ' ', s, "expected a space".to_string())
+}
+
 pub(crate) fn extract_ident(s: &str) -> Result<(&str, &str), String> {
     let input_starts_with_alphabetic = s
         .chars()
@@ -80,6 +84,14 @@ mod tests {
     #[test]
     fn extract_spaces() {
         assert_eq!(extract_whitespace("    1"), ("1", "    "));
+    }
+
+    #[test]
+    fn do_not_extract_spaces1_when_input_does_not_start_with_them() {
+        assert_eq!(
+            extract_whitespace1("blah"),
+            Err("expected a space".to_string()),
+        );
     }
 
     #[test]
