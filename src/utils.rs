@@ -31,7 +31,7 @@ pub(crate) fn extract_whitespace(s: &str) -> (&str, &str) {
     take_while(|c| c == ' ', s)
 }
 
-pub(crate) fn extract_ident(s: &str) -> (&str, &str) {
+pub(crate) fn extract_ident(s: &str) -> Result<(&str, &str), String> {
     let input_starts_with_alphabetic = s
         .chars()
         .next()
@@ -39,9 +39,9 @@ pub(crate) fn extract_ident(s: &str) -> (&str, &str) {
         .unwrap_or(false);
 
     if input_starts_with_alphabetic {
-        take_while(|c| c.is_ascii_alphanumeric(), s)
+        Ok(take_while(|c| c.is_ascii_alphanumeric(), s))
     } else {
-        (s, "")
+        Err("expected identifier".to_string())
     }
 }
 
@@ -84,17 +84,20 @@ mod tests {
 
     #[test]
     fn extract_alphabetic_ident() {
-        assert_eq!(extract_ident("abcdEFG stop"), (" stop", "abcdEFG"));
+        assert_eq!(extract_ident("abcdEFG stop"), Ok((" stop", "abcdEFG")));
     }
 
     #[test]
     fn extract_alphanumeric_ident() {
-        assert_eq!(extract_ident("foobar1()"), ("()", "foobar1"));
+        assert_eq!(extract_ident("foobar1()"), Ok(("()", "foobar1")));
     }
 
     #[test]
     fn cannot_extract_ident_beginning_with_number() {
-        assert_eq!(extract_ident("123abc"), ("123abc", ""));
+        assert_eq!(
+            extract_ident("123abc"),
+            Err("expected identifier".to_string()),
+        );
     }
 
     #[test]
