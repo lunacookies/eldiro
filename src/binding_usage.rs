@@ -18,6 +18,10 @@ impl BindingUsage {
             },
         ))
     }
+
+    pub(crate) fn eval(&self, env: &Env) -> Result<Val, String> {
+        env.get_binding_value(&self.name)
+    }
 }
 
 #[cfg(test)]
@@ -35,5 +39,19 @@ mod tests {
                 },
             )),
         )
+    }
+
+    #[test]
+    fn eval_existing_binding_usage() {
+        let mut env = Env::default();
+        env.store_binding("foo".to_string(), Val::Number(10));
+
+        assert_eq!(
+            BindingUsage {
+                name: "foo".to_string(),
+            }
+            .eval(&env),
+            Ok(Val::Number(10)),
+        );
     }
 }
