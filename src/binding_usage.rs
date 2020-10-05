@@ -54,4 +54,17 @@ mod tests {
             Ok(Val::Number(10)),
         );
     }
+
+    #[test]
+    fn eval_non_existent_binding_usage() {
+        let empty_env = Env::default();
+
+        assert_eq!(
+            BindingUsage {
+                name: "i_dont_exist".to_string(),
+            }
+            .eval(&empty_env),
+            Err("binding with name ‘i_dont_exist’ does not exist".to_string()),
+        );
+    }
 }
