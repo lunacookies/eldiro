@@ -39,24 +39,11 @@ impl Block {
 
         let stmts_except_last = &self.stmts[..self.stmts.len() - 1];
         for stmt in stmts_except_last {
-            match stmt {
-                Stmt::BindingDef(binding_def) => binding_def.eval(&mut env)?,
-                Stmt::Expr(expr) => {
-                    expr.eval(&env)?;
-                }
-            }
+            stmt.eval(&mut env)?;
         }
 
         // We can unwrap safely here because we have already checked whether self.stmts is empty.
-        let last = self.stmts.last().unwrap();
-
-        match last {
-            Stmt::BindingDef(binding_def) => {
-                binding_def.eval(&mut env)?;
-                Ok(Val::Unit)
-            }
-            Stmt::Expr(expr) => expr.eval(&env),
-        }
+        self.stmts.last().unwrap().eval(&mut env)
     }
 }
 
