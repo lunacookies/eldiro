@@ -38,7 +38,7 @@ mod tests {
                     name: "abc".to_string(),
                 },
             )),
-        )
+        );
     }
 
     #[test]
