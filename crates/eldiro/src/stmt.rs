@@ -53,8 +53,8 @@ mod tests {
             Ok((
                 "",
                 Stmt::Expr(Expr::Operation {
-                    lhs: Number(1),
-                    rhs: Number(1),
+                    lhs: Box::new(Expr::Number(Number(1))),
+                    rhs: Box::new(Expr::Number(Number(1))),
                     op: Op::Add,
                 }),
             )),
