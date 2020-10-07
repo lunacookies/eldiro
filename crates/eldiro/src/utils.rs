@@ -23,6 +23,23 @@ fn take_while1(
     }
 }
 
+pub(crate) fn sequence<T>(
+    parser: impl Fn(&str) -> Result<(&str, T), String>,
+    mut s: &str,
+) -> Result<(&str, Vec<T>), String> {
+    let mut items = Vec::new();
+
+    while let Ok((new_s, item)) = parser(s) {
+        s = new_s;
+        items.push(item);
+
+        let (new_s, _) = extract_whitespace(s);
+        s = new_s;
+    }
+
+    Ok((s, items))
+}
+
 pub(crate) fn extract_digits(s: &str) -> Result<(&str, &str), String> {
     take_while1(|c| c.is_ascii_digit(), s, "expected digits".to_string())
 }
