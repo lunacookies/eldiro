@@ -1,4 +1,4 @@
-pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
+fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
     let extracted_end = s
         .char_indices()
         .find_map(|(idx, c)| if accept(c) { None } else { Some(idx) })
@@ -9,7 +9,7 @@ pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str)
     (remainder, extracted)
 }
 
-pub(crate) fn take_while1(
+fn take_while1(
     accept: impl Fn(char) -> bool,
     s: &str,
     error_msg: String,
