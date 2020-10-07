@@ -14,22 +14,26 @@ fn main() -> io::Result<()> {
 
         stdin.read_line(&mut input)?;
 
-        match eldiro::parse(input.trim()) {
-            Ok(parse) => match parse.eval(&mut env) {
-                Ok(val) => {
-                    dbg!(val);
-                }
-                Err(msg) => {
-                    writeln!(stderr, "Evaluation error: {}", msg)?;
-                    stderr.flush()?;
-                }
-            },
+        match run(input.trim(), &mut env) {
+            Ok(()) => {}
             Err(msg) => {
-                writeln!(stderr, "Parse error: {}", msg)?;
+                writeln!(stderr, "{}", msg)?;
                 stderr.flush()?;
             }
         }
 
         input.clear();
     }
+}
+
+fn run(input: &str, env: &mut eldiro::Env) -> Result<(), String> {
+    let parse = eldiro::parse(input).map_err(|msg| format!("Parse error: {}", msg))?;
+
+    let evaluated = parse
+        .eval(env)
+        .map_err(|msg| format!("Evaluation error: {}", msg))?;
+
+    dbg!(evaluated);
+
+    Ok(())
 }
