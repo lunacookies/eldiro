@@ -2,7 +2,7 @@ use crate::val::Val;
 use std::collections::HashMap;
 
 #[derive(Debug, PartialEq, Default)]
-pub(crate) struct Env<'parent> {
+pub struct Env<'parent> {
     bindings: HashMap<String, Val>,
     parent: Option<&'parent Self>,
 }

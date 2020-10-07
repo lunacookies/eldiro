@@ -1,5 +1,5 @@
 #[derive(Debug, Clone, PartialEq)]
-pub(crate) enum Val {
+pub enum Val {
     Number(i32),
     Unit,
 }
