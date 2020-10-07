@@ -1,11 +1,12 @@
 mod binding_usage;
 mod block;
 
+pub(crate) use binding_usage::BindingUsage;
+pub(crate) use block::Block;
+
 use crate::env::Env;
 use crate::utils;
 use crate::val::Val;
-use binding_usage::BindingUsage;
-use block::Block;
 
 #[derive(Debug, PartialEq)]
 pub(crate) struct Number(pub(crate) i32);
