@@ -33,7 +33,9 @@ fn run(input: &str, env: &mut eldiro::Env) -> Result<(), String> {
         .eval(env)
         .map_err(|msg| format!("Evaluation error: {}", msg))?;
 
-    dbg!(evaluated);
+    if evaluated != eldiro::Val::Unit {
+        dbg!(evaluated);
+    }
 
     Ok(())
 }
