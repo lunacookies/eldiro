@@ -1,6 +1,7 @@
 mod binding_def;
 mod env;
 mod expr;
+mod func_def;
 mod stmt;
 mod utils;
 mod val;
