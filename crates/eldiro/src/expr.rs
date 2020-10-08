@@ -8,7 +8,7 @@ use crate::env::Env;
 use crate::utils;
 use crate::val::Val;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) struct Number(pub(crate) i32);
 
 impl Number {
@@ -18,7 +18,7 @@ impl Number {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) enum Op {
     Add,
     Sub,
@@ -36,7 +36,7 @@ impl Op {
     }
 }
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) enum Expr {
     Number(Number),
     Operation {

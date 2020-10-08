@@ -1,7 +1,7 @@
 use crate::stmt::Stmt;
 use crate::utils;
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub(crate) struct FuncDef {
     pub(crate) name: String,
     pub(crate) params: Vec<String>,
