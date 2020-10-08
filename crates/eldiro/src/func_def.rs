@@ -1,3 +1,4 @@
+use crate::env::Env;
 use crate::stmt::Stmt;
 use crate::utils;
 
@@ -34,6 +35,11 @@ impl FuncDef {
                 body: Box::new(body),
             },
         ))
+    }
+
+    pub(crate) fn eval(&self, env: &mut Env) -> Result<(), String> {
+        env.store_func(self.name.clone(), self.params.clone(), *self.body.clone());
+        Ok(())
     }
 }
 

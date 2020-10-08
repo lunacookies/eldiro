@@ -25,7 +25,10 @@ impl Stmt {
                 binding_def.eval(env)?;
                 Ok(Val::Unit)
             }
-            Self::FuncDef(_) => todo!(),
+            Self::FuncDef(func_def) => {
+                func_def.eval(env)?;
+                Ok(Val::Unit)
+            }
             Self::Expr(expr) => expr.eval(env),
         }
     }
@@ -88,6 +91,19 @@ mod tests {
             Stmt::BindingDef(BindingDef {
                 name: "whatever".to_string(),
                 val: Expr::Number(Number(-10)),
+            })
+            .eval(&mut Env::default()),
+            Ok(Val::Unit),
+        );
+    }
+
+    #[test]
+    fn eval_func_def() {
+        assert_eq!(
+            Stmt::FuncDef(FuncDef {
+                name: "always_return_one".to_string(),
+                params: Vec::new(),
+                body: Box::new(Stmt::Expr(Expr::Number(Number(1)))),
             })
             .eval(&mut Env::default()),
             Ok(Val::Unit),
