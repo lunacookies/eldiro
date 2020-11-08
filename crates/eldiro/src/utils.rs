@@ -1,4 +1,4 @@
-fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
+pub(crate) fn take_while(accept: impl Fn(char) -> bool, s: &str) -> (&str, &str) {
     let extracted_end = s
         .char_indices()
         .find_map(|(idx, c)| if accept(c) { None } else { Some(idx) })
@@ -39,6 +39,20 @@ pub(crate) fn sequence<T>(
     }
 
     Ok((s, items))
+}
+
+pub(crate) fn sequence1<T>(
+    parser: impl Fn(&str) -> Result<(&str, T), String>,
+    separator_parser: impl Fn(&str) -> (&str, &str),
+    s: &str,
+) -> Result<(&str, Vec<T>), String> {
+    let (s, sequence) = sequence(parser, separator_parser, s)?;
+
+    if sequence.is_empty() {
+        Err("expected a sequence with more than one item".to_string())
+    } else {
+        Ok((s, sequence))
+    }
 }
 
 pub(crate) fn extract_digits(s: &str) -> Result<(&str, &str), String> {
