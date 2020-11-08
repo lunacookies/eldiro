@@ -25,6 +25,7 @@ fn take_while1(
 
 pub(crate) fn sequence<T>(
     parser: impl Fn(&str) -> Result<(&str, T), String>,
+    separator_parser: impl Fn(&str) -> (&str, &str),
     mut s: &str,
 ) -> Result<(&str, Vec<T>), String> {
     let mut items = Vec::new();
@@ -33,7 +34,7 @@ pub(crate) fn sequence<T>(
         s = new_s;
         items.push(item);
 
-        let (new_s, _) = extract_whitespace(s);
+        let (new_s, _) = separator_parser(s);
         s = new_s;
     }
 
