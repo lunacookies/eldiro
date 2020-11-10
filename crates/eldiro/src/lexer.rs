@@ -8,6 +8,9 @@ pub(crate) enum SyntaxKind {
     #[token("fn")]
     FnKw,
 
+    #[token("let")]
+    LetKw,
+
     #[error]
     Error,
 }
@@ -31,5 +34,10 @@ mod tests {
     #[test]
     fn lex_fn_keyword() {
         check("fn", SyntaxKind::FnKw);
+    }
+
+    #[test]
+    fn lex_let_keyword() {
+        check("let", SyntaxKind::LetKw);
     }
 }
