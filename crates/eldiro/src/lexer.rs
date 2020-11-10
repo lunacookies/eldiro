@@ -5,6 +5,9 @@ pub(crate) enum SyntaxKind {
     #[regex(" +")]
     Whitespace,
 
+    #[token("fn")]
+    FnKw,
+
     #[error]
     Error,
 }
@@ -19,5 +22,13 @@ mod tests {
 
         assert_eq!(lexer.next(), Some(SyntaxKind::Whitespace));
         assert_eq!(lexer.slice(), "   ");
+    }
+
+    #[test]
+    fn lex_fn_keyword() {
+        let mut lexer = SyntaxKind::lexer("fn");
+
+        assert_eq!(lexer.next(), Some(SyntaxKind::FnKw));
+        assert_eq!(lexer.slice(), "fn");
     }
 }
