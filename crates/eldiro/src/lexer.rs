@@ -16,19 +16,20 @@ pub(crate) enum SyntaxKind {
 mod tests {
     use super::*;
 
+    fn check(input: &str, kind: SyntaxKind) {
+        let mut lexer = SyntaxKind::lexer(input);
+
+        assert_eq!(lexer.next(), Some(kind));
+        assert_eq!(lexer.slice(), input);
+    }
+
     #[test]
     fn lex_spaces() {
-        let mut lexer = SyntaxKind::lexer("   ");
-
-        assert_eq!(lexer.next(), Some(SyntaxKind::Whitespace));
-        assert_eq!(lexer.slice(), "   ");
+        check("   ", SyntaxKind::Whitespace);
     }
 
     #[test]
     fn lex_fn_keyword() {
-        let mut lexer = SyntaxKind::lexer("fn");
-
-        assert_eq!(lexer.next(), Some(SyntaxKind::FnKw));
-        assert_eq!(lexer.slice(), "fn");
+        check("fn", SyntaxKind::FnKw);
     }
 }
