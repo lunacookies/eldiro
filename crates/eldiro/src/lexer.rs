@@ -40,6 +40,8 @@ pub(crate) enum SyntaxKind {
 
     #[error]
     Error,
+
+    Root,
 }
 
 #[cfg(test)]
