@@ -37,3 +37,25 @@ impl<'a> Parser<'a> {
 pub(crate) struct Parse {
     green_node: GreenNode,
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::syntax::SyntaxNode;
+    use expect_test::{expect, Expect};
+
+    fn check(input: &str, expected_tree: Expect) {
+        let parse = Parser::new(input).parse();
+        let syntax_node = SyntaxNode::new_root(parse.green_node);
+
+        let actual_tree = format!("{:#?}", syntax_node);
+
+        // We cut off the last byte because formatting the SyntaxNode adds on a newline at the end.
+        expected_tree.assert_eq(&actual_tree[0..actual_tree.len() - 1]);
+    }
+
+    #[test]
+    fn parse_nothing() {
+        check("", expect![[r#"Root@0..0"#]]);
+    }
+}
