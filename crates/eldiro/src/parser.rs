@@ -3,7 +3,7 @@ mod expr;
 use crate::lexer::{Lexer, SyntaxKind};
 use crate::syntax::{EldiroLanguage, SyntaxNode};
 use expr::expr;
-use rowan::{GreenNode, GreenNodeBuilder, Language};
+use rowan::{Checkpoint, GreenNode, GreenNodeBuilder, Language};
 use std::iter::Peekable;
 
 pub struct Parser<'a> {
@@ -35,6 +35,11 @@ impl<'a> Parser<'a> {
         self.builder.start_node(EldiroLanguage::kind_to_raw(kind));
     }
 
+    fn start_node_at(&mut self, checkpoint: Checkpoint, kind: SyntaxKind) {
+        self.builder
+            .start_node_at(checkpoint, EldiroLanguage::kind_to_raw(kind));
+    }
+
     fn finish_node(&mut self) {
         self.builder.finish_node();
     }
@@ -44,6 +49,10 @@ impl<'a> Parser<'a> {
 
         self.builder
             .token(EldiroLanguage::kind_to_raw(kind), text.into());
+    }
+
+    fn checkpoint(&self) -> Checkpoint {
+        self.builder.checkpoint()
     }
 
     fn peek(&mut self) -> Option<SyntaxKind> {
