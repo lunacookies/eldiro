@@ -3,20 +3,20 @@ use crate::syntax::EldiroLanguage;
 use logos::Logos;
 use rowan::{GreenNode, GreenNodeBuilder, Language};
 
-pub(crate) struct Parser<'a> {
+pub struct Parser<'a> {
     lexer: logos::Lexer<'a, SyntaxKind>,
     builder: GreenNodeBuilder<'static>,
 }
 
 impl<'a> Parser<'a> {
-    pub(crate) fn new(input: &'a str) -> Self {
+    pub fn new(input: &'a str) -> Self {
         Self {
             lexer: SyntaxKind::lexer(input),
             builder: GreenNodeBuilder::new(),
         }
     }
 
-    pub(crate) fn parse(mut self) -> Parse {
+    pub fn parse(mut self) -> Parse {
         self.start_node(SyntaxKind::Root);
         self.finish_node();
 
@@ -34,7 +34,7 @@ impl<'a> Parser<'a> {
     }
 }
 
-pub(crate) struct Parse {
+pub struct Parse {
     green_node: GreenNode,
 }
 
