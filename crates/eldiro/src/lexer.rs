@@ -73,10 +73,8 @@ mod tests {
     use super::*;
 
     fn check(input: &str, kind: SyntaxKind) {
-        let mut lexer = SyntaxKind::lexer(input);
-
-        assert_eq!(lexer.next(), Some(kind));
-        assert_eq!(lexer.slice(), input);
+        let mut lexer = Lexer::new(input);
+        assert_eq!(lexer.next(), Some((kind, input)));
     }
 
     #[test]
