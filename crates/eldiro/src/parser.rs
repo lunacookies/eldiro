@@ -1,17 +1,17 @@
-use crate::lexer::SyntaxKind;
+use crate::lexer::{Lexer, SyntaxKind};
 use crate::syntax::{EldiroLanguage, SyntaxNode};
-use logos::Logos;
 use rowan::{GreenNode, GreenNodeBuilder, Language};
+use std::iter::Peekable;
 
 pub struct Parser<'a> {
-    lexer: logos::Lexer<'a, SyntaxKind>,
+    lexer: Peekable<Lexer<'a>>,
     builder: GreenNodeBuilder<'static>,
 }
 
 impl<'a> Parser<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
-            lexer: SyntaxKind::lexer(input),
+            lexer: Lexer::new(input).peekable(),
             builder: GreenNodeBuilder::new(),
         }
     }
@@ -19,11 +19,8 @@ impl<'a> Parser<'a> {
     pub fn parse(mut self) -> Parse {
         self.start_node(SyntaxKind::Root);
 
-        if self.lexer.next() == Some(SyntaxKind::Number) {
-            self.builder.token(
-                EldiroLanguage::kind_to_raw(SyntaxKind::Number),
-                self.lexer.slice().into(),
-            );
+        if self.peek() == Some(SyntaxKind::Number) {
+            self.bump();
         }
 
         self.finish_node();
@@ -39,6 +36,17 @@ impl<'a> Parser<'a> {
 
     fn finish_node(&mut self) {
         self.builder.finish_node();
+    }
+
+    fn bump(&mut self) {
+        let (kind, text) = self.lexer.next().unwrap();
+
+        self.builder
+            .token(EldiroLanguage::kind_to_raw(kind), text.into());
+    }
+
+    fn peek(&mut self) -> Option<SyntaxKind> {
+        self.lexer.peek().map(|(kind, _)| *kind)
     }
 }
 
