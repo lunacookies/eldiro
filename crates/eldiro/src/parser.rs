@@ -19,8 +19,9 @@ impl<'a> Parser<'a> {
     pub fn parse(mut self) -> Parse {
         self.start_node(SyntaxKind::Root);
 
-        if self.peek() == Some(SyntaxKind::Number) {
-            self.bump();
+        match self.peek() {
+            Some(SyntaxKind::Number) | Some(SyntaxKind::Ident) => self.bump(),
+            _ => {}
         }
 
         self.finish_node();
@@ -86,6 +87,16 @@ mod tests {
             expect![[r#"
 Root@0..3
   Number@0..3 "123""#]],
+        );
+    }
+
+    #[test]
+    fn parse_binding_usage() {
+        check(
+            "counter",
+            expect![[r#"
+Root@0..7
+  Ident@0..7 "counter""#]],
         );
     }
 }
