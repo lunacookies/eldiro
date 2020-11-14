@@ -18,6 +18,14 @@ impl<'a> Parser<'a> {
 
     pub fn parse(mut self) -> Parse {
         self.start_node(SyntaxKind::Root);
+
+        if self.lexer.next() == Some(SyntaxKind::Number) {
+            self.builder.token(
+                EldiroLanguage::kind_to_raw(SyntaxKind::Number),
+                self.lexer.slice().into(),
+            );
+        }
+
         self.finish_node();
 
         Parse {
@@ -61,5 +69,15 @@ mod tests {
     #[test]
     fn parse_nothing() {
         check("", expect![[r#"Root@0..0"#]]);
+    }
+
+    #[test]
+    fn parse_number() {
+        check(
+            "123",
+            expect![[r#"
+Root@0..3
+  Number@0..3 "123""#]],
+        );
     }
 }
