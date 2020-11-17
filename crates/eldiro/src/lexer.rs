@@ -72,8 +72,8 @@ pub(crate) enum SyntaxKind {
     Error,
 
     Root,
-    BinOp,
-    UnaryOp,
+    BinaryExpr,
+    PrefixExpr,
 }
 
 #[cfg(test)]
