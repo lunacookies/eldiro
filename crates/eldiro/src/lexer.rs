@@ -56,6 +56,12 @@ pub(crate) enum SyntaxKind {
     #[token("=")]
     Equals,
 
+    #[token("(")]
+    LParen,
+
+    #[token(")")]
+    RParen,
+
     #[token("{")]
     LBrace,
 
@@ -142,6 +148,16 @@ mod tests {
     #[test]
     fn lex_equals() {
         check("=", SyntaxKind::Equals);
+    }
+
+    #[test]
+    fn lex_left_parenthesis() {
+        check("(", SyntaxKind::LParen);
+    }
+
+    #[test]
+    fn lex_right_parenthesis() {
+        check(")", SyntaxKind::RParen);
     }
 
     #[test]
