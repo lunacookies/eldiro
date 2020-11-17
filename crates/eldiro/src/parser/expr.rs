@@ -10,15 +10,26 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
 
     match p.peek() {
         Some(SyntaxKind::Number) | Some(SyntaxKind::Ident) => p.bump(),
+        Some(SyntaxKind::Minus) => {
+            let op = PrefixOp::Neg;
+            let ((), right_binding_power) = op.binding_power();
+
+            // Eat the operator’s token.
+            p.bump();
+
+            p.start_node_at(checkpoint, SyntaxKind::UnaryOp);
+            expr_binding_power(p, right_binding_power);
+            p.finish_node();
+        }
         _ => {}
     }
 
     loop {
         let op = match p.peek() {
-            Some(SyntaxKind::Plus) => Op::Add,
-            Some(SyntaxKind::Minus) => Op::Sub,
-            Some(SyntaxKind::Star) => Op::Mul,
-            Some(SyntaxKind::Slash) => Op::Div,
+            Some(SyntaxKind::Plus) => InfixOp::Add,
+            Some(SyntaxKind::Minus) => InfixOp::Sub,
+            Some(SyntaxKind::Star) => InfixOp::Mul,
+            Some(SyntaxKind::Slash) => InfixOp::Div,
             _ => return, // we’ll handle errors later.
         };
 
@@ -37,18 +48,30 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
     }
 }
 
-enum Op {
+enum InfixOp {
     Add,
     Sub,
     Mul,
     Div,
 }
 
-impl Op {
+impl InfixOp {
     fn binding_power(&self) -> (u8, u8) {
         match self {
             Self::Add | Self::Sub => (1, 2),
             Self::Mul | Self::Div => (3, 4),
+        }
+    }
+}
+
+enum PrefixOp {
+    Neg,
+}
+
+impl PrefixOp {
+    fn binding_power(&self) -> ((), u8) {
+        match self {
+            Self::Neg => ((), 5),
         }
     }
 }
@@ -126,6 +149,33 @@ Root@0..7
         Number@4..5 "3"
     Minus@5..6 "-"
     Number@6..7 "4""#]],
+        );
+    }
+
+    #[test]
+    fn parse_negation() {
+        check(
+            "-10",
+            expect![[r#"
+Root@0..3
+  UnaryOp@0..3
+    Minus@0..1 "-"
+    Number@1..3 "10""#]],
+        );
+    }
+
+    #[test]
+    fn negation_has_higher_binding_power_than_infix_operators() {
+        check(
+            "-20+20",
+            expect![[r#"
+Root@0..6
+  BinOp@0..6
+    UnaryOp@0..3
+      Minus@0..1 "-"
+      Number@1..3 "20"
+    Plus@3..4 "+"
+    Number@4..6 "20""#]],
         );
     }
 }
