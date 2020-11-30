@@ -1,58 +1,63 @@
+mod event;
 mod expr;
+mod sink;
 
 use crate::lexer::{Lexer, SyntaxKind};
-use crate::syntax::{EldiroLanguage, SyntaxNode};
+use crate::syntax::SyntaxNode;
+use event::Event;
 use expr::expr;
-use rowan::{Checkpoint, GreenNode, GreenNodeBuilder, Language};
+use rowan::GreenNode;
+use sink::Sink;
 use std::iter::Peekable;
 
 pub struct Parser<'a> {
     lexer: Peekable<Lexer<'a>>,
-    builder: GreenNodeBuilder<'static>,
+    events: Vec<Event>,
 }
 
 impl<'a> Parser<'a> {
     pub fn new(input: &'a str) -> Self {
         Self {
             lexer: Lexer::new(input).peekable(),
-            builder: GreenNodeBuilder::new(),
+            events: Vec::new(),
         }
     }
 
     pub fn parse(mut self) -> Parse {
         self.start_node(SyntaxKind::Root);
-
         expr(&mut self);
-
         self.finish_node();
 
+        let sink = Sink::new(self.events);
+
         Parse {
-            green_node: self.builder.finish(),
+            green_node: sink.finish(),
         }
     }
 
     fn start_node(&mut self, kind: SyntaxKind) {
-        self.builder.start_node(EldiroLanguage::kind_to_raw(kind));
+        self.events.push(Event::StartNode { kind });
     }
 
-    fn start_node_at(&mut self, checkpoint: Checkpoint, kind: SyntaxKind) {
-        self.builder
-            .start_node_at(checkpoint, EldiroLanguage::kind_to_raw(kind));
+    fn start_node_at(&mut self, checkpoint: usize, kind: SyntaxKind) {
+        self.events.push(Event::StartNodeAt { kind, checkpoint });
     }
 
     fn finish_node(&mut self) {
-        self.builder.finish_node();
+        self.events.push(Event::FinishNode);
     }
 
     fn bump(&mut self) {
         let (kind, text) = self.lexer.next().unwrap();
 
-        self.builder
-            .token(EldiroLanguage::kind_to_raw(kind), text.into());
+        self.events.push(Event::AddToken {
+            kind,
+            text: text.into(),
+        });
     }
 
-    fn checkpoint(&self) -> Checkpoint {
-        self.builder.checkpoint()
+    fn checkpoint(&self) -> usize {
+        self.events.len()
     }
 
     fn peek(&mut self) -> Option<SyntaxKind> {
