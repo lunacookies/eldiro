@@ -2,7 +2,7 @@ mod event;
 mod expr;
 mod sink;
 
-use crate::lexer::{Lexer, SyntaxKind};
+use crate::lexer::{Lexeme, Lexer, SyntaxKind};
 use crate::syntax::SyntaxNode;
 use event::Event;
 use expr::expr;
@@ -21,13 +21,13 @@ pub fn parse(input: &str) -> Parse {
 }
 
 struct Parser<'l, 'input> {
-    lexemes: &'l [(SyntaxKind, &'input str)],
+    lexemes: &'l [Lexeme<'input>],
     cursor: usize,
     events: Vec<Event>,
 }
 
 impl<'l, 'input> Parser<'l, 'input> {
-    fn new(lexemes: &'l [(SyntaxKind, &'input str)]) -> Self {
+    fn new(lexemes: &'l [Lexeme<'input>]) -> Self {
         Self {
             lexemes,
             cursor: 0,
@@ -56,7 +56,7 @@ impl<'l, 'input> Parser<'l, 'input> {
     }
 
     fn bump(&mut self) {
-        let (kind, text) = self.lexemes[self.cursor];
+        let Lexeme { kind, text } = self.lexemes[self.cursor];
 
         self.cursor += 1;
         self.events.push(Event::AddToken {
@@ -70,7 +70,9 @@ impl<'l, 'input> Parser<'l, 'input> {
     }
 
     fn peek(&self) -> Option<SyntaxKind> {
-        self.lexemes.get(self.cursor).map(|(kind, _)| *kind)
+        self.lexemes
+            .get(self.cursor)
+            .map(|Lexeme { kind, .. }| *kind)
     }
 }
 

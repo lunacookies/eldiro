@@ -1,16 +1,16 @@
 use super::event::Event;
-use crate::lexer::SyntaxKind;
+use crate::lexer::Lexeme;
 use crate::syntax::EldiroLanguage;
 use rowan::{GreenNode, GreenNodeBuilder, Language};
 
 pub(super) struct Sink<'l, 'input> {
     builder: GreenNodeBuilder<'static>,
-    lexemes: &'l [(SyntaxKind, &'input str)],
+    lexemes: &'l [Lexeme<'input>],
     events: Vec<Event>,
 }
 
 impl<'l, 'input> Sink<'l, 'input> {
-    pub(super) fn new(lexemes: &'l [(SyntaxKind, &'input str)], events: Vec<Event>) -> Self {
+    pub(super) fn new(lexemes: &'l [Lexeme<'input>], events: Vec<Event>) -> Self {
         Self {
             builder: GreenNodeBuilder::new(),
             lexemes,
