@@ -74,6 +74,9 @@ pub(crate) enum SyntaxKind {
     #[token("}")]
     RBrace,
 
+    #[regex("#.*")]
+    Comment,
+
     #[error]
     Error,
 
@@ -174,5 +177,10 @@ mod tests {
     #[test]
     fn lex_right_brace() {
         check("}", SyntaxKind::RBrace);
+    }
+
+    #[test]
+    fn lex_comment() {
+        check("# foo", SyntaxKind::Comment);
     }
 }
