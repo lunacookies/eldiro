@@ -32,7 +32,7 @@ pub(crate) struct Lexeme<'a> {
 
 #[derive(Debug, Copy, Clone, PartialEq, Logos, FromPrimitive, ToPrimitive)]
 pub(crate) enum SyntaxKind {
-    #[regex(" +")]
+    #[regex("[ \n]+")]
     Whitespace,
 
     #[token("fn")]
@@ -101,8 +101,8 @@ mod tests {
     }
 
     #[test]
-    fn lex_spaces() {
-        check("   ", SyntaxKind::Whitespace);
+    fn lex_spaces_and_newlines() {
+        check("  \n ", SyntaxKind::Whitespace);
     }
 
     #[test]
