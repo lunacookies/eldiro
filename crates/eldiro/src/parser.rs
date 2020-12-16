@@ -52,18 +52,6 @@ impl<'l, 'input> Parser<'l, 'input> {
         Marker::new(pos)
     }
 
-    fn start_node(&mut self, kind: SyntaxKind) {
-        self.events.push(Event::StartNode { kind });
-    }
-
-    fn start_node_at(&mut self, checkpoint: usize, kind: SyntaxKind) {
-        self.events.push(Event::StartNodeAt { kind, checkpoint });
-    }
-
-    fn finish_node(&mut self) {
-        self.events.push(Event::FinishNode);
-    }
-
     fn bump(&mut self) {
         let Lexeme { kind, text } = self.source.next_lexeme().unwrap();
 
@@ -71,10 +59,6 @@ impl<'l, 'input> Parser<'l, 'input> {
             kind: *kind,
             text: (*text).into(),
         });
-    }
-
-    fn checkpoint(&self) -> usize {
-        self.events.len()
     }
 
     fn peek(&mut self) -> Option<SyntaxKind> {
