@@ -38,6 +38,7 @@ impl<'l, 'input> Sink<'l, 'input> {
                 Event::StartNodeAt { .. } => unreachable!(),
                 Event::AddToken { kind, text } => self.token(kind, text),
                 Event::FinishNode => self.builder.finish_node(),
+                Event::Placeholder => unreachable!(),
             }
 
             self.eat_trivia();

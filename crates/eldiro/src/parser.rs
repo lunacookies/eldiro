@@ -1,5 +1,6 @@
 mod event;
 mod expr;
+mod marker;
 mod sink;
 mod source;
 
@@ -7,6 +8,7 @@ use crate::lexer::{Lexeme, Lexer, SyntaxKind};
 use crate::syntax::SyntaxNode;
 use event::Event;
 use expr::expr;
+use marker::Marker;
 use rowan::GreenNode;
 use sink::Sink;
 use source::Source;
@@ -41,6 +43,13 @@ impl<'l, 'input> Parser<'l, 'input> {
         self.finish_node();
 
         self.events
+    }
+
+    fn start(&mut self) -> Marker {
+        let pos = self.events.len();
+        self.events.push(Event::Placeholder);
+
+        Marker::new(pos)
     }
 
     fn start_node(&mut self, kind: SyntaxKind) {

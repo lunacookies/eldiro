@@ -6,6 +6,7 @@ name = "eldiro"
 version = "0.1.0"
 
 [dependencies]
+drop_bomb = "0.1.5"
 logos = "0.11.4"
 num-derive = "0.3.3"
 num-traits = "0.2.14"
