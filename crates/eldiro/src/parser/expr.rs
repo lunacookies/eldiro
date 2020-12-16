@@ -1,3 +1,4 @@
+use super::marker::CompletedMarker;
 use super::Parser;
 use crate::lexer::SyntaxKind;
 
@@ -6,7 +7,38 @@ pub(super) fn expr(p: &mut Parser) {
 }
 
 fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
-    let mut lhs = match p.peek() {
+    let mut lhs = if let Some(lhs) = lhs(p) {
+        lhs
+    } else {
+        return; // we’ll handle errors later.
+    };
+
+    loop {
+        let op = match p.peek() {
+            Some(SyntaxKind::Plus) => InfixOp::Add,
+            Some(SyntaxKind::Minus) => InfixOp::Sub,
+            Some(SyntaxKind::Star) => InfixOp::Mul,
+            Some(SyntaxKind::Slash) => InfixOp::Div,
+            _ => return, // we’ll handle errors later.
+        };
+
+        let (left_binding_power, right_binding_power) = op.binding_power();
+
+        if left_binding_power < minimum_binding_power {
+            return;
+        }
+
+        // Eat the operator’s token.
+        p.bump();
+
+        let m = lhs.precede(p);
+        expr_binding_power(p, right_binding_power);
+        lhs = m.complete(p, SyntaxKind::BinaryExpr);
+    }
+}
+
+fn lhs(p: &mut Parser) -> Option<CompletedMarker> {
+    let cm = match p.peek() {
         Some(SyntaxKind::Number) => {
             let m = p.start();
             p.bump();
@@ -41,31 +73,10 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
 
             m.complete(p, SyntaxKind::ParenExpr)
         }
-        _ => return, // we’ll handle errors later.
+        _ => return None,
     };
 
-    loop {
-        let op = match p.peek() {
-            Some(SyntaxKind::Plus) => InfixOp::Add,
-            Some(SyntaxKind::Minus) => InfixOp::Sub,
-            Some(SyntaxKind::Star) => InfixOp::Mul,
-            Some(SyntaxKind::Slash) => InfixOp::Div,
-            _ => return, // we’ll handle errors later.
-        };
-
-        let (left_binding_power, right_binding_power) = op.binding_power();
-
-        if left_binding_power < minimum_binding_power {
-            return;
-        }
-
-        // Eat the operator’s token.
-        p.bump();
-
-        let m = lhs.precede(p);
-        expr_binding_power(p, right_binding_power);
-        lhs = m.complete(p, SyntaxKind::BinaryExpr);
-    }
+    Some(cm)
 }
 
 enum InfixOp {
