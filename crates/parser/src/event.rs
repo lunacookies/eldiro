@@ -1,7 +1,7 @@
 use syntax::SyntaxKind;
 
 #[derive(Debug, PartialEq)]
-pub(super) enum Event {
+pub(crate) enum Event {
     StartNode {
         kind: SyntaxKind,
         forward_parent: Option<usize>,

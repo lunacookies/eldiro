@@ -6,10 +6,4 @@ name = "eldiro"
 version = "0.1.0"
 
 [dependencies]
-drop_bomb = "0.1.5"
-lexer = {path = "../lexer"}
-rowan = "0.10.0"
-syntax = {path = "../syntax"}
-
-[dev-dependencies]
-expect-test = "1.0.1"
+parser = {path = "../parser"}
