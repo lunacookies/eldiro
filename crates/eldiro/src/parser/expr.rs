@@ -78,7 +78,7 @@ impl PrefixOp {
 }
 
 fn literal(p: &mut Parser) -> CompletedMarker {
-    assert_eq!(p.peek(), Some(SyntaxKind::Number));
+    assert!(p.at(SyntaxKind::Number));
 
     let m = p.start();
     p.bump();
@@ -86,7 +86,7 @@ fn literal(p: &mut Parser) -> CompletedMarker {
 }
 
 fn variable_ref(p: &mut Parser) -> CompletedMarker {
-    assert_eq!(p.peek(), Some(SyntaxKind::Ident));
+    assert!(p.at(SyntaxKind::Ident));
 
     let m = p.start();
     p.bump();
@@ -94,7 +94,7 @@ fn variable_ref(p: &mut Parser) -> CompletedMarker {
 }
 
 fn prefix_expr(p: &mut Parser) -> CompletedMarker {
-    assert_eq!(p.peek(), Some(SyntaxKind::Minus));
+    assert!(p.at(SyntaxKind::Minus));
 
     let m = p.start();
 
@@ -110,14 +110,14 @@ fn prefix_expr(p: &mut Parser) -> CompletedMarker {
 }
 
 fn paren_expr(p: &mut Parser) -> CompletedMarker {
-    assert_eq!(p.peek(), Some(SyntaxKind::LParen));
+    assert!(p.at(SyntaxKind::LParen));
 
     let m = p.start();
 
     p.bump();
     expr_binding_power(p, 0);
 
-    assert_eq!(p.peek(), Some(SyntaxKind::RParen));
+    assert!(p.at(SyntaxKind::RParen));
     p.bump();
 
     m.complete(p, SyntaxKind::ParenExpr)
