@@ -2,7 +2,7 @@
 authors = ["Aramis Razzaghipour <aramisnoah@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-name = "eldiro-cli"
+name = "eldiro"
 version = "0.1.0"
 
 [dependencies]
