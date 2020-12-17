@@ -13,7 +13,7 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) -> Option<Compl
             Some(SyntaxKind::Minus) => BinaryOp::Sub,
             Some(SyntaxKind::Star) => BinaryOp::Mul,
             Some(SyntaxKind::Slash) => BinaryOp::Div,
-            _ => return None, // we’ll handle errors later.
+            _ => break, // we’ll handle errors later.
         };
 
         let (left_binding_power, right_binding_power) = op.binding_power();
