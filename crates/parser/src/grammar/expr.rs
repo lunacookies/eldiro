@@ -1,15 +1,11 @@
 use super::*;
 
-pub(super) fn expr(p: &mut Parser) {
-    expr_binding_power(p, 0);
+pub(super) fn expr(p: &mut Parser) -> Option<CompletedMarker> {
+    expr_binding_power(p, 0)
 }
 
-fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
-    let mut lhs = if let Some(lhs) = lhs(p) {
-        lhs
-    } else {
-        return; // we’ll handle errors later.
-    };
+fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) -> Option<CompletedMarker> {
+    let mut lhs = lhs(p)?; // we’ll handle errors later.
 
     loop {
         let op = match p.peek() {
@@ -17,13 +13,13 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
             Some(SyntaxKind::Minus) => BinaryOp::Sub,
             Some(SyntaxKind::Star) => BinaryOp::Mul,
             Some(SyntaxKind::Slash) => BinaryOp::Div,
-            _ => return, // we’ll handle errors later.
+            _ => return None, // we’ll handle errors later.
         };
 
         let (left_binding_power, right_binding_power) = op.binding_power();
 
         if left_binding_power < minimum_binding_power {
-            return;
+            break;
         }
 
         // Eat the operator’s token.
@@ -33,6 +29,8 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
         expr_binding_power(p, right_binding_power);
         lhs = m.complete(p, SyntaxKind::InfixExpr);
     }
+
+    Some(lhs)
 }
 
 fn lhs(p: &mut Parser) -> Option<CompletedMarker> {
