@@ -39,40 +39,10 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) {
 
 fn lhs(p: &mut Parser) -> Option<CompletedMarker> {
     let cm = match p.peek() {
-        Some(SyntaxKind::Number) => {
-            let m = p.start();
-            p.bump();
-            m.complete(p, SyntaxKind::Literal)
-        }
-        Some(SyntaxKind::Ident) => {
-            let m = p.start();
-            p.bump();
-            m.complete(p, SyntaxKind::VariableRef)
-        }
-        Some(SyntaxKind::Minus) => {
-            let m = p.start();
-
-            let op = PrefixOp::Neg;
-            let ((), right_binding_power) = op.binding_power();
-
-            // Eat the operator’s token.
-            p.bump();
-
-            expr_binding_power(p, right_binding_power);
-
-            m.complete(p, SyntaxKind::PrefixExpr)
-        }
-        Some(SyntaxKind::LParen) => {
-            let m = p.start();
-
-            p.bump();
-            expr_binding_power(p, 0);
-
-            assert_eq!(p.peek(), Some(SyntaxKind::RParen));
-            p.bump();
-
-            m.complete(p, SyntaxKind::ParenExpr)
-        }
+        Some(SyntaxKind::Number) => literal(p),
+        Some(SyntaxKind::Ident) => variable_ref(p),
+        Some(SyntaxKind::Minus) => prefix_expr(p),
+        Some(SyntaxKind::LParen) => paren_expr(p),
         _ => return None,
     };
 
@@ -105,6 +75,52 @@ impl PrefixOp {
             Self::Neg => ((), 5),
         }
     }
+}
+
+fn literal(p: &mut Parser) -> CompletedMarker {
+    assert_eq!(p.peek(), Some(SyntaxKind::Number));
+
+    let m = p.start();
+    p.bump();
+    m.complete(p, SyntaxKind::Literal)
+}
+
+fn variable_ref(p: &mut Parser) -> CompletedMarker {
+    assert_eq!(p.peek(), Some(SyntaxKind::Ident));
+
+    let m = p.start();
+    p.bump();
+    m.complete(p, SyntaxKind::VariableRef)
+}
+
+fn prefix_expr(p: &mut Parser) -> CompletedMarker {
+    assert_eq!(p.peek(), Some(SyntaxKind::Minus));
+
+    let m = p.start();
+
+    let op = PrefixOp::Neg;
+    let ((), right_binding_power) = op.binding_power();
+
+    // Eat the operator’s token.
+    p.bump();
+
+    expr_binding_power(p, right_binding_power);
+
+    m.complete(p, SyntaxKind::PrefixExpr)
+}
+
+fn paren_expr(p: &mut Parser) -> CompletedMarker {
+    assert_eq!(p.peek(), Some(SyntaxKind::LParen));
+
+    let m = p.start();
+
+    p.bump();
+    expr_binding_power(p, 0);
+
+    assert_eq!(p.peek(), Some(SyntaxKind::RParen));
+    p.bump();
+
+    m.complete(p, SyntaxKind::ParenExpr)
 }
 
 #[cfg(test)]
