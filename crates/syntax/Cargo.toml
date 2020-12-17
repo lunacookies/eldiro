@@ -2,14 +2,11 @@
 authors = ["Aramis Razzaghipour <aramisnoah@gmail.com>"]
 edition = "2018"
 license = "MIT OR Apache-2.0"
-name = "eldiro"
+name = "syntax"
 version = "0.1.0"
 
 [dependencies]
-drop_bomb = "0.1.5"
 lexer = {path = "../lexer"}
+num-derive = "0.3.3"
+num-traits = "0.2.14"
 rowan = "0.10.0"
-syntax = {path = "../syntax"}
-
-[dev-dependencies]
-expect-test = "1.0.1"

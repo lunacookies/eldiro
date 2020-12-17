@@ -1,7 +1,7 @@
 use super::event::Event;
 use super::Parser;
-use crate::syntax::SyntaxKind;
 use drop_bomb::DropBomb;
+use syntax::SyntaxKind;
 
 pub(super) struct Marker {
     pos: usize,

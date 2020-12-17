@@ -4,7 +4,6 @@ mod marker;
 mod sink;
 mod source;
 
-use crate::syntax::{SyntaxKind, SyntaxNode};
 use event::Event;
 use expr::expr;
 use lexer::{Lexer, Token};
@@ -12,6 +11,7 @@ use marker::Marker;
 use rowan::GreenNode;
 use sink::Sink;
 use source::Source;
+use syntax::{SyntaxKind, SyntaxNode};
 
 pub fn parse(input: &str) -> Parse {
     let tokens: Vec<_> = Lexer::new(input).collect();
