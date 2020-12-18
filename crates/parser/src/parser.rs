@@ -6,6 +6,8 @@ use crate::source::Source;
 use marker::Marker;
 use syntax::SyntaxKind;
 
+const RECOVERY_SET: [SyntaxKind; 1] = [SyntaxKind::LetKw];
+
 pub(crate) struct Parser<'t, 'input> {
     source: Source<'t, 'input>,
     events: Vec<Event>,
@@ -31,6 +33,20 @@ impl<'t, 'input> Parser<'t, 'input> {
         Marker::new(pos)
     }
 
+    pub(crate) fn expect(&mut self, kind: SyntaxKind) {
+        if self.at(kind) {
+            self.bump();
+        } else {
+            self.error();
+        }
+    }
+
+    pub(crate) fn error(&mut self) {
+        if !self.at_set(&RECOVERY_SET) && !self.at_end() {
+            self.bump();
+        }
+    }
+
     pub(crate) fn bump(&mut self) {
         self.source.next_token().unwrap();
         self.events.push(Event::AddToken);
@@ -38,6 +54,14 @@ impl<'t, 'input> Parser<'t, 'input> {
 
     pub(crate) fn at(&mut self, kind: SyntaxKind) -> bool {
         self.peek() == Some(kind)
+    }
+
+    fn at_set(&mut self, set: &[SyntaxKind]) -> bool {
+        self.peek().map_or(false, |k| set.contains(&k))
+    }
+
+    pub(crate) fn at_end(&mut self) -> bool {
+        self.peek().is_none()
     }
 
     pub(crate) fn peek(&mut self) -> Option<SyntaxKind> {

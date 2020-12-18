@@ -12,13 +12,10 @@ fn variable_def(p: &mut Parser) -> CompletedMarker {
     let m = p.start();
     p.bump();
 
-    assert!(p.at(SyntaxKind::Ident));
-    p.bump();
+    p.expect(SyntaxKind::Ident);
+    p.expect(SyntaxKind::Equals);
 
-    assert!(p.at(SyntaxKind::Equals));
-    p.bump();
-
-    expr::expr(p).unwrap();
+    expr::expr(p);
 
     m.complete(p, SyntaxKind::VariableDef)
 }
