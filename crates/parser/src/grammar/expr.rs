@@ -8,15 +8,18 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) -> Option<Compl
     let mut lhs = lhs(p)?;
 
     loop {
-        let op = match p.peek() {
-            Some(SyntaxKind::Plus) => BinaryOp::Add,
-            Some(SyntaxKind::Minus) => BinaryOp::Sub,
-            Some(SyntaxKind::Star) => BinaryOp::Mul,
-            Some(SyntaxKind::Slash) => BinaryOp::Div,
-
+        let op = if p.at(SyntaxKind::Plus) {
+            BinaryOp::Add
+        } else if p.at(SyntaxKind::Minus) {
+            BinaryOp::Sub
+        } else if p.at(SyntaxKind::Star) {
+            BinaryOp::Mul
+        } else if p.at(SyntaxKind::Slash) {
+            BinaryOp::Div
+        } else {
             // We’re not at an operator; we don’t know what to do next, so we return and let the
             // caller decide.
-            _ => break,
+            break;
         };
 
         let (left_binding_power, right_binding_power) = op.binding_power();
@@ -37,15 +40,17 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) -> Option<Compl
 }
 
 fn lhs(p: &mut Parser) -> Option<CompletedMarker> {
-    let cm = match p.peek() {
-        Some(SyntaxKind::Number) => literal(p),
-        Some(SyntaxKind::Ident) => variable_ref(p),
-        Some(SyntaxKind::Minus) => prefix_expr(p),
-        Some(SyntaxKind::LParen) => paren_expr(p),
-        _ => {
-            p.error();
-            return None;
-        }
+    let cm = if p.at(SyntaxKind::Number) {
+        literal(p)
+    } else if p.at(SyntaxKind::Ident) {
+        variable_ref(p)
+    } else if p.at(SyntaxKind::Minus) {
+        prefix_expr(p)
+    } else if p.at(SyntaxKind::LParen) {
+        paren_expr(p)
+    } else {
+        p.error();
+        return None;
     };
 
     Some(cm)

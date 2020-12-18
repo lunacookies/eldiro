@@ -66,7 +66,7 @@ impl<'t, 'input> Parser<'t, 'input> {
         self.peek().is_none()
     }
 
-    pub(crate) fn peek(&mut self) -> Option<SyntaxKind> {
+    fn peek(&mut self) -> Option<SyntaxKind> {
         self.source.peek_kind()
     }
 }
