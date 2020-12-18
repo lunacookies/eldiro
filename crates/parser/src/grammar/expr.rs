@@ -5,7 +5,7 @@ pub(super) fn expr(p: &mut Parser) -> Option<CompletedMarker> {
 }
 
 fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) -> Option<CompletedMarker> {
-    let mut lhs = lhs(p)?; // we’ll handle errors later.
+    let mut lhs = lhs(p)?;
 
     loop {
         let op = match p.peek() {
@@ -13,7 +13,10 @@ fn expr_binding_power(p: &mut Parser, minimum_binding_power: u8) -> Option<Compl
             Some(SyntaxKind::Minus) => BinaryOp::Sub,
             Some(SyntaxKind::Star) => BinaryOp::Mul,
             Some(SyntaxKind::Slash) => BinaryOp::Div,
-            _ => break, // we’ll handle errors later.
+
+            // We’re not at an operator; we don’t know what to do next, so we return and let the
+            // caller decide.
+            _ => break,
         };
 
         let (left_binding_power, right_binding_power) = op.binding_power();
