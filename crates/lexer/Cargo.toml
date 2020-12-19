@@ -7,3 +7,4 @@ version = "0.1.0"
 
 [dependencies]
 logos = "0.11.4"
+text-size = "1.0.0"

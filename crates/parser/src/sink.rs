@@ -78,7 +78,7 @@ impl<'t, 'input> Sink<'t, 'input> {
     }
 
     fn token(&mut self) {
-        let Token { kind, text } = self.tokens[self.cursor];
+        let Token { kind, text, .. } = self.tokens[self.cursor];
 
         self.builder
             .token(EldiroLanguage::kind_to_raw(kind.into()), text.into());
