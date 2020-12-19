@@ -1,5 +1,6 @@
 use lexer::Token;
 use syntax::SyntaxKind;
+use text_size::TextRange;
 
 pub(crate) struct Source<'t, 'input> {
     tokens: &'t [Token<'input>],
@@ -25,6 +26,11 @@ impl<'t, 'input> Source<'t, 'input> {
         self.peek_kind_raw()
     }
 
+    pub(crate) fn peek_token(&mut self) -> Option<&Token> {
+        self.eat_trivia();
+        self.peek_token_raw()
+    }
+
     fn eat_trivia(&mut self) {
         while self.at_trivia() {
             self.cursor += 1;
@@ -35,9 +41,16 @@ impl<'t, 'input> Source<'t, 'input> {
         self.peek_kind_raw().map_or(false, SyntaxKind::is_trivia)
     }
 
+    pub(crate) fn last_token_range(&self) -> Option<TextRange> {
+        self.tokens.last().map(|Token { range, .. }| *range)
+    }
+
     fn peek_kind_raw(&self) -> Option<SyntaxKind> {
-        self.tokens
-            .get(self.cursor)
+        self.peek_token_raw()
             .map(|Token { kind, .. }| (*kind).into())
+    }
+
+    fn peek_token_raw(&self) -> Option<&Token> {
+        self.tokens.get(self.cursor)
     }
 }
