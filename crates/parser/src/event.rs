@@ -1,3 +1,4 @@
+use crate::parser::ParseError;
 use syntax::SyntaxKind;
 
 #[derive(Debug, PartialEq)]
@@ -8,5 +9,6 @@ pub(crate) enum Event {
     },
     AddToken,
     FinishNode,
+    Error(ParseError),
     Placeholder,
 }

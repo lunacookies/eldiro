@@ -5,7 +5,7 @@ mod sink;
 mod source;
 
 use lexer::Lexer;
-use parser::Parser;
+use parser::{ParseError, Parser};
 use rowan::GreenNode;
 use sink::Sink;
 use source::Source;
@@ -18,13 +18,12 @@ pub fn parse(input: &str) -> Parse {
     let events = parser.parse();
     let sink = Sink::new(&tokens, events);
 
-    Parse {
-        green_node: sink.finish(),
-    }
+    sink.finish()
 }
 
 pub struct Parse {
     green_node: GreenNode,
+    errors: Vec<ParseError>,
 }
 
 impl Parse {
