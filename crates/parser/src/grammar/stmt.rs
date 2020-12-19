@@ -65,7 +65,8 @@ Root@0..17
     Equals@14..15 "="
     Whitespace@15..16 " "
     VariableRef@16..17
-      Ident@16..17 "a""#]],
+      Ident@16..17 "a"
+error at 8..11: expected number, identifier, ‘-’ or ‘(’, but found ‘let’"#]],
         );
     }
 }
