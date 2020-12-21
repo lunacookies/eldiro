@@ -1,7 +1,7 @@
 use super::*;
 
 pub(super) fn stmt(p: &mut Parser) -> Option<CompletedMarker> {
-    if p.at(SyntaxKind::LetKw) {
+    if p.at(TokenKind::LetKw) {
         Some(variable_def(p))
     } else {
         expr::expr(p)
@@ -9,12 +9,12 @@ pub(super) fn stmt(p: &mut Parser) -> Option<CompletedMarker> {
 }
 
 fn variable_def(p: &mut Parser) -> CompletedMarker {
-    assert!(p.at(SyntaxKind::LetKw));
+    assert!(p.at(TokenKind::LetKw));
     let m = p.start();
     p.bump();
 
-    p.expect(SyntaxKind::Ident);
-    p.expect(SyntaxKind::Equals);
+    p.expect(TokenKind::Ident);
+    p.expect(TokenKind::Equals);
 
     expr::expr(p);
 

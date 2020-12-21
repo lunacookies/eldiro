@@ -4,7 +4,7 @@ use crate::Parse;
 use lexer::Token;
 use rowan::{GreenNodeBuilder, Language};
 use std::mem;
-use syntax::{EldiroLanguage, SyntaxKind};
+use syntax::EldiroLanguage;
 
 pub(crate) struct Sink<'t, 'input> {
     builder: GreenNodeBuilder<'static>,
@@ -77,7 +77,7 @@ impl<'t, 'input> Sink<'t, 'input> {
 
     fn eat_trivia(&mut self) {
         while let Some(token) = self.tokens.get(self.cursor) {
-            if !SyntaxKind::from(token.kind).is_trivia() {
+            if !token.kind.is_trivia() {
                 break;
             }
 
