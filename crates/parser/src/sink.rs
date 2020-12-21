@@ -1,4 +1,4 @@
-use super::event::Event;
+use crate::event::Event;
 use crate::parser::ParseError;
 use crate::Parse;
 use lexer::Token;
