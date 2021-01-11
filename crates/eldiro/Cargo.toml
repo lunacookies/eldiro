@@ -6,4 +6,5 @@ name = "eldiro"
 version = "0.1.0"
 
 [dependencies]
+ast = {path = "../ast"}
 parser = {path = "../parser"}
