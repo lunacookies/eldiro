@@ -53,6 +53,8 @@ impl From<TokenKind> for SyntaxKind {
 }
 
 pub type SyntaxNode = rowan::SyntaxNode<EldiroLanguage>;
+pub type SyntaxElement = rowan::SyntaxElement<EldiroLanguage>;
+pub type SyntaxToken = rowan::SyntaxToken<EldiroLanguage>;
 
 #[derive(Debug, Copy, Clone, Ord, PartialOrd, Eq, PartialEq, Hash)]
 pub enum EldiroLanguage {}
