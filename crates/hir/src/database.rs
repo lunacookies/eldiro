@@ -1,5 +1,5 @@
 use crate::{BinaryOp, Expr, Stmt, UnaryOp};
-use arena::Arena;
+use la_arena::Arena;
 use syntax::SyntaxKind;
 
 #[derive(Debug, Default)]

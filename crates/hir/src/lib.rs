@@ -1,7 +1,7 @@
 mod database;
 pub use database::Database;
 
-use arena::Idx;
+use la_arena::Idx;
 use smol_str::SmolStr;
 
 type ExprIdx = Idx<Expr>;
