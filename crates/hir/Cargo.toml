@@ -6,6 +6,7 @@ name = "hir"
 version = "0.1.0"
 
 [dependencies]
+arena = {path = "../arena"}
 ast = {path = "../ast"}
 smol_str = "0.1.17"
 syntax = {path = "../syntax"}
