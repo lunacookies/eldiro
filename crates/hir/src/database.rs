@@ -116,6 +116,24 @@ mod tests {
     }
 
     #[test]
+    fn lower_variable_def_without_name() {
+        let root = parse("let = 10");
+        let ast = root.stmts().next().unwrap();
+        assert!(Database::default().lower_stmt(ast).is_none());
+    }
+
+    #[test]
+    fn lower_variable_def_without_value() {
+        check_stmt(
+            "let a =",
+            Stmt::VariableDef {
+                name: "a".into(),
+                value: Expr::Missing,
+            },
+        );
+    }
+
+    #[test]
     fn lower_expr_stmt() {
         check_stmt("123", Stmt::Expr(Expr::Literal { n: 123 }));
     }
@@ -132,6 +150,23 @@ mod tests {
                 lhs,
                 rhs,
                 op: BinaryOp::Add,
+            },
+            Database { exprs },
+        );
+    }
+
+    #[test]
+    fn lower_binary_expr_without_rhs() {
+        let mut exprs = Arena::new();
+        let lhs = exprs.alloc(Expr::Literal { n: 10 });
+        let rhs = exprs.alloc(Expr::Missing);
+
+        check_expr(
+            "10 -",
+            Expr::Binary {
+                lhs,
+                rhs,
+                op: BinaryOp::Sub,
             },
             Database { exprs },
         );
@@ -160,6 +195,21 @@ mod tests {
             "-10",
             Expr::Unary {
                 expr: ten,
+                op: UnaryOp::Neg,
+            },
+            Database { exprs },
+        );
+    }
+
+    #[test]
+    fn lower_unary_expr_without_expr() {
+        let mut exprs = Arena::new();
+        let expr = exprs.alloc(Expr::Missing);
+
+        check_expr(
+            "-",
+            Expr::Unary {
+                expr,
                 op: UnaryOp::Neg,
             },
             Database { exprs },
