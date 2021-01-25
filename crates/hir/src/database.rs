@@ -11,7 +11,7 @@ impl Database {
     pub(crate) fn lower_stmt(&mut self, ast: ast::Stmt) -> Option<Stmt> {
         let result = match ast {
             ast::Stmt::VariableDef(ast) => Stmt::VariableDef {
-                name: ast.name()?.text().clone(),
+                name: ast.name()?.text().into(),
                 value: self.lower_expr(ast.value()),
             },
             ast::Stmt::Expr(ast) => Stmt::Expr(self.lower_expr(Some(ast))),
@@ -27,7 +27,7 @@ impl Database {
                 ast::Expr::Literal(ast) => Expr::Literal { n: ast.parse() },
                 ast::Expr::ParenExpr(ast) => self.lower_expr(ast.expr()),
                 ast::Expr::UnaryExpr(ast) => self.lower_unary(ast),
-                ast::Expr::VariableRef(ast) => Expr::VariableRef { var: ast.name() },
+                ast::Expr::VariableRef(ast) => self.lower_variable_ref(ast),
             }
         } else {
             Expr::Missing
@@ -64,6 +64,12 @@ impl Database {
         Expr::Unary {
             op,
             expr: self.exprs.alloc(expr),
+        }
+    }
+
+    fn lower_variable_ref(&mut self, ast: ast::VariableRef) -> Expr {
+        Expr::VariableRef {
+            var: ast.name().unwrap().text().into(),
         }
     }
 }

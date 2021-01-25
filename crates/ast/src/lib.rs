@@ -1,4 +1,3 @@
-use smol_str::SmolStr;
 use syntax::{SyntaxElement, SyntaxKind, SyntaxNode, SyntaxToken};
 
 #[derive(Debug)]
@@ -138,7 +137,7 @@ impl UnaryExpr {
 pub struct VariableRef(SyntaxNode);
 
 impl VariableRef {
-    pub fn name(&self) -> SmolStr {
-        self.0.first_token().unwrap().text().clone()
+    pub fn name(&self) -> Option<SyntaxToken> {
+        self.0.first_token()
     }
 }

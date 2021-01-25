@@ -8,7 +8,7 @@ version = "0.1.0"
 [dependencies]
 drop_bomb = "0.1.5"
 lexer = {path = "../lexer"}
-rowan = "0.10.0"
+rowan = "0.12.1"
 syntax = {path = "../syntax"}
 text-size = "1.0.0"
 
