@@ -2,7 +2,7 @@ use crate::{BinaryOp, Expr, Stmt, UnaryOp};
 use la_arena::Arena;
 use syntax::SyntaxKind;
 
-#[derive(Debug, Default)]
+#[derive(Debug, PartialEq, Default)]
 pub struct Database {
     exprs: Arena<Expr>,
 }
@@ -71,5 +71,107 @@ impl Database {
         Expr::VariableRef {
             var: ast.name().unwrap().text().into(),
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn parse(input: &str) -> ast::Root {
+        ast::Root::cast(parser::parse(input).syntax()).unwrap()
+    }
+
+    fn check_stmt(input: &str, expected_hir: Stmt) {
+        let root = parse(input);
+        let ast = root.stmts().next().unwrap();
+        let hir = Database::default().lower_stmt(ast).unwrap();
+
+        assert_eq!(hir, expected_hir);
+    }
+
+    fn check_expr(input: &str, expected_hir: Expr, expected_database: Database) {
+        let root = parse(input);
+        let first_stmt = root.stmts().next().unwrap();
+        let ast = match first_stmt {
+            ast::Stmt::Expr(ast) => ast,
+            _ => unreachable!(),
+        };
+        let mut database = Database::default();
+        let hir = database.lower_expr(Some(ast));
+
+        assert_eq!(hir, expected_hir);
+        assert_eq!(database, expected_database);
+    }
+
+    #[test]
+    fn lower_variable_def() {
+        check_stmt(
+            "let foo = bar",
+            Stmt::VariableDef {
+                name: "foo".into(),
+                value: Expr::VariableRef { var: "bar".into() },
+            },
+        );
+    }
+
+    #[test]
+    fn lower_expr_stmt() {
+        check_stmt("123", Stmt::Expr(Expr::Literal { n: 123 }));
+    }
+
+    #[test]
+    fn lower_binary_expr() {
+        let mut exprs = Arena::new();
+        let lhs = exprs.alloc(Expr::Literal { n: 1 });
+        let rhs = exprs.alloc(Expr::Literal { n: 2 });
+
+        check_expr(
+            "1 + 2",
+            Expr::Binary {
+                lhs,
+                rhs,
+                op: BinaryOp::Add,
+            },
+            Database { exprs },
+        );
+    }
+
+    #[test]
+    fn lower_literal() {
+        check_expr("999", Expr::Literal { n: 999 }, Database::default());
+    }
+
+    #[test]
+    fn lower_paren_expr() {
+        check_expr(
+            "((((((abc))))))",
+            Expr::VariableRef { var: "abc".into() },
+            Database::default(),
+        );
+    }
+
+    #[test]
+    fn lower_unary_expr() {
+        let mut exprs = Arena::new();
+        let ten = exprs.alloc(Expr::Literal { n: 10 });
+
+        check_expr(
+            "-10",
+            Expr::Unary {
+                expr: ten,
+                op: UnaryOp::Neg,
+            },
+            Database { exprs },
+        );
+    }
+
+    #[test]
+    fn lower_variable_ref() {
+        check_expr(
+            "foo",
+            Expr::VariableRef { var: "foo".into() },
+            Database::default(),
+        );
     }
 }
