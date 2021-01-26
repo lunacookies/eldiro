@@ -1,0 +1,21 @@
+[package]
+authors = ["Aramis Razzaghipour <aramisnoah@gmail.com>"]
+edition = "2018"
+license = "MIT OR Apache-2.0"
+name = "fuzz"
+version = "0.1.0"
+
+[package.metadata]
+cargo-fuzz = true
+
+[workspace]
+
+[[bin]]
+name = "parse_lower"
+path = "fuzz_targets/parse_lower.rs"
+
+[dependencies]
+ast = {path = "../crates/ast"}
+hir = {path = "../crates/hir"}
+libfuzzer-sys = "0.3"
+parser = {path = "../crates/parser"}
