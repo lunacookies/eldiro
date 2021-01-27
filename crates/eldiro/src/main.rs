@@ -16,7 +16,13 @@ fn main() -> io::Result<()> {
         let parse = parse(&input);
         println!("{}", parse.debug_tree());
 
-        let root = ast::Root::cast(parse.syntax()).unwrap();
+        let syntax = parse.syntax();
+
+        for error in ast::validation::validate(&syntax) {
+            println!("{}", error);
+        }
+
+        let root = ast::Root::cast(syntax).unwrap();
 
         dbg!(root
             .stmts()
