@@ -1,0 +1,5 @@
+let foo = 10
+let bar = 20
+let a = foo + (bar * bar - (100 / 33))
+
+a * (a - 10) # the result
