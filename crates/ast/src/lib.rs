@@ -103,8 +103,8 @@ impl BinaryExpr {
 pub struct Literal(SyntaxNode);
 
 impl Literal {
-    pub fn parse(&self) -> u64 {
-        self.0.first_token().unwrap().text().parse().unwrap()
+    pub fn parse(&self) -> Option<u64> {
+        self.0.first_token().unwrap().text().parse().ok()
     }
 }
 

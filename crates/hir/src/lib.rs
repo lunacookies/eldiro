@@ -21,7 +21,8 @@ pub enum Expr {
         rhs: ExprIdx,
     },
     Literal {
-        n: u64,
+        /// is `None` if the number is too big to fit in a u64
+        n: Option<u64>,
     },
     Unary {
         op: UnaryOp,

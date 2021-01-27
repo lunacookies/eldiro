@@ -135,14 +135,14 @@ mod tests {
 
     #[test]
     fn lower_expr_stmt() {
-        check_stmt("123", Stmt::Expr(Expr::Literal { n: 123 }));
+        check_stmt("123", Stmt::Expr(Expr::Literal { n: Some(123) }));
     }
 
     #[test]
     fn lower_binary_expr() {
         let mut exprs = Arena::new();
-        let lhs = exprs.alloc(Expr::Literal { n: 1 });
-        let rhs = exprs.alloc(Expr::Literal { n: 2 });
+        let lhs = exprs.alloc(Expr::Literal { n: Some(1) });
+        let rhs = exprs.alloc(Expr::Literal { n: Some(2) });
 
         check_expr(
             "1 + 2",
@@ -158,7 +158,7 @@ mod tests {
     #[test]
     fn lower_binary_expr_without_rhs() {
         let mut exprs = Arena::new();
-        let lhs = exprs.alloc(Expr::Literal { n: 10 });
+        let lhs = exprs.alloc(Expr::Literal { n: Some(10) });
         let rhs = exprs.alloc(Expr::Missing);
 
         check_expr(
@@ -174,7 +174,7 @@ mod tests {
 
     #[test]
     fn lower_literal() {
-        check_expr("999", Expr::Literal { n: 999 }, Database::default());
+        check_expr("999", Expr::Literal { n: Some(999) }, Database::default());
     }
 
     #[test]
@@ -189,7 +189,7 @@ mod tests {
     #[test]
     fn lower_unary_expr() {
         let mut exprs = Arena::new();
-        let ten = exprs.alloc(Expr::Literal { n: 10 });
+        let ten = exprs.alloc(Expr::Literal { n: Some(10) });
 
         check_expr(
             "-10",
