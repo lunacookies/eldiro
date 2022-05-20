@@ -3,7 +3,7 @@ use std::fmt;
 
 #[derive(Debug, Copy, Clone, PartialEq, Logos)]
 pub enum TokenKind {
-    #[regex("[ \n]+")]
+    #[regex("[ \n\r\t]+")]
     Whitespace,
 
     #[token("fn")]
